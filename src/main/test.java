@@ -25,14 +25,20 @@ public class test {
             return;
         }
         
-		try (DbPool pool = new DbPool(0, 10, test::create)) {
+		try (DbPool pool = new DbPool(2, 10, test::create)) {
 			try(DbConnection dbCon = pool.getConnection()) {
 				ResultSet res = dbCon.prepareStatement("SELECT 'OK';").executeQuery();
 				res.next();
 				System.out.println("DB: " + res.getString(1));
+				
+				
 			}
 			
-			System.in.read();
+			try(DbConnection dbCon2 = pool.getConnection()) {
+				ResultSet res2 = dbCon2.prepareStatement("SELECT 'OK2';").executeQuery();
+				res2.next();
+				System.out.println("DB2: " + res2.getString(1));
+			}
 		}
 		
 		System.out.println("OK");
