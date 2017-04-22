@@ -5,14 +5,19 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DbConnection implements AutoCloseable {
-
+	private static final Duration TIMEOUT = Duration.ofMinutes(1);
+	
+	private static final Logger LOG = Logger.getLogger( DbConnection.class.getName() );
+	
 	private boolean isAvailable;
 	private final DbPool pool;
 	private final Connection connection;
 	private LocalDateTime lastUsed;
-	private static final Duration timeout = Duration.ofMinutes(1);
+	
 	
 	DbConnection(final DbPool pool, final Connection connection) {
 		
@@ -30,7 +35,7 @@ public class DbConnection implements AutoCloseable {
 	}
 	
 	synchronized boolean isIdle() {
-		return isAvailable && Duration.between(lastUsed, LocalDateTime.now()).compareTo(timeout) > 0;
+		return isAvailable && Duration.between(lastUsed, LocalDateTime.now()).compareTo(TIMEOUT) > 0;
 	}
 
 	synchronized boolean tryObtain() {
@@ -39,7 +44,7 @@ public class DbConnection implements AutoCloseable {
 				return false;
 			}
 		} catch (SQLException e) {
-			// TODO Log exception
+			LOG.log(Level.SEVERE, e.getMessage(), e);
 			return false;
 		}
 		
@@ -53,8 +58,7 @@ public class DbConnection implements AutoCloseable {
 				this.connection.close();
 			}
 		} catch (SQLException e) {
-			// TODO Log exception
-			e.printStackTrace();
+			LOG.log(Level.SEVERE, e.getMessage(), e);
 		}
 	}
 	

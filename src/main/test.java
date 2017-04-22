@@ -25,7 +25,7 @@ public class test {
             return;
         }
         
-		try (DbPool pool = new DbPool(2, 10, test::create)) {
+		try (DbPool pool = new DbPool(5, 10, test::create)) {
 			try(DbConnection dbCon = pool.getConnection()) {
 				ResultSet res = dbCon.prepareStatement("SELECT 'OK';").executeQuery();
 				res.next();
@@ -35,28 +35,22 @@ public class test {
 			}
 			
 			try(DbConnection dbCon2 = pool.getConnection()) {
-				ResultSet res2 = dbCon2.prepareStatement("SELECT 'OK2';").executeQuery();
+				ResultSet res2 = dbCon2.prepareStatement("SELECT COUNT(*) FROM pg_catalog.pg_stat_activity WHERE usename = 'test';").executeQuery();
 				res2.next();
-				System.out.println("DB2: " + res2.getString(1));
+				System.out.println("Active Connections for user: " + res2.getLong(1));
 			}
 		}
 		
 		System.out.println("OK");
 	}
 	
-	private static Connection create() {
+	private static Connection create() throws SQLException {
 		Properties props = new Properties();
         props.setProperty("user", "test");
         props.setProperty("password", "changeme");
         props.setProperty("ssl", "true");   // necessary!
 
-		
-		try {
-			return DriverManager.getConnection(connectionString, props);
-		} catch (SQLException e) {
-			// TODO Replace with ThrowingSupplier
-			return null;
-		}
+		return DriverManager.getConnection(connectionString, props);
 	}
 
 }
