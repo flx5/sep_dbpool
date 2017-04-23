@@ -1,4 +1,4 @@
-package com.flx5.sepdbpool;
+package com.flx5.sep.dbpool;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

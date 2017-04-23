@@ -7,8 +7,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
 
-import com.flx5.sepdbpool.DbConnection;
-import com.flx5.sepdbpool.DbPool;
+import com.flx5.sep.dbpool.DbConnection;
+import com.flx5.sep.dbpool.DbPool;
 
 public class test {
 

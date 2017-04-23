@@ -1,4 +1,4 @@
-package com.flx5.sepdbpool;
+package com.flx5.sep.dbpool;
 
 @FunctionalInterface
 public interface ThrowingSupplier<T, E extends Throwable> {
